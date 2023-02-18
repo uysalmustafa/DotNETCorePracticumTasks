@@ -30,6 +30,7 @@ namespace ProductsAPI.Controllers
             _context = context;
         }
 
+
         // GET: api/Products
         [HttpGet]
         public ActionResult<IEnumerable<Product>> GetProducts([FromQuery] string? sortOrder)
@@ -69,7 +70,7 @@ namespace ProductsAPI.Controllers
         }
 
 
-        // GET: api/ListProducts
+        // GET: api/Products/List
         [HttpGet("List")]
         public ActionResult<IEnumerable<Product>> List([FromQuery] QueryObject product)
         {
@@ -81,9 +82,9 @@ namespace ProductsAPI.Controllers
             return products.ToList();
         }
 
-        // GET: api/Products/5
-        [HttpGet("GetProductByIdQuery")]
-        public  ActionResult<Product> GetProductByIdQuery([FromQuery] int id)
+        // GET: api/Products/ProductByIdQuery
+        [HttpGet("ProductByIdQuery")]
+        public  ActionResult<Product> ProductByIdQuery([FromQuery] int id)
         {
             var product =  _context.Products.Find(id);
             if (product == null)
@@ -93,8 +94,9 @@ namespace ProductsAPI.Controllers
             return product;
         }
 
-        [HttpGet("GetProductByIdRoute/{id}")]
-        public ActionResult<Product> GetProductByIdRoute([FromRoute] int id)
+        // GET: api/Products/ProductByIdRoute/2
+        [HttpGet("ProductByIdRoute/{id}")]
+        public ActionResult<Product> ProductByIdRoute([FromRoute] int id)
         {
             var product = _context.Products.Find(id);
             if (product == null)
@@ -106,7 +108,7 @@ namespace ProductsAPI.Controllers
 
         // PUT: api/Products/5
         [HttpPut("{id}")]
-        public IActionResult PutProduct([FromRoute] int id, [FromBody] Product product)
+        public IActionResult UpdateProduct([FromRoute] int id, [FromBody] Product product)
         {
             if (id != product.Id)
             {
@@ -114,24 +116,7 @@ namespace ProductsAPI.Controllers
             }
 
             _context.Entry(product).State = EntityState.Modified;
-
-            try
-            {
-                _context.SaveChanges();
-            }
-
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            _context.SaveChanges();
             return NoContent();
         }
 
@@ -141,11 +126,11 @@ namespace ProductsAPI.Controllers
         {
             _context.Products.Add(product);
             _context.SaveChanges();
-            return CreatedAtAction(nameof(GetProductByIdQuery), new { id = product.Id }, product);
+            return CreatedAtAction(nameof(ProductByIdQuery), new { id = product.Id }, product);
         }
 
-        // DELETE: api/Products/5
-        [HttpDelete("DeleteProductByRoute/{id}")]
+        // DELETE: /api/Products/ProductByRoute/5
+        [HttpDelete("ProductByRoute/{id}")]
         public  IActionResult DeleteProductByRoute([FromRoute] int id)
         {
             var product =  _context.Products.Find(id);
@@ -158,8 +143,8 @@ namespace ProductsAPI.Controllers
             return NoContent();
         }
 
-        // DELETE: api/Products/5
-        [HttpDelete("DeleteProductByQuery")]
+        // DELETE: /api/Products/ProductByQuery
+        [HttpDelete("ProductByQuery")]
         public IActionResult DeleteProductByQuery([FromQuery] int id)
         {
             var product = _context.Products.Find(id);
@@ -175,7 +160,7 @@ namespace ProductsAPI.Controllers
 
         // PATCH: api/Products/5
         [HttpPatch("{id}")]
-        public  IActionResult UpdateProduct(int id, JsonPatchDocument<Product> patchDoc)
+        public  IActionResult UpdatePatch(int id, JsonPatchDocument<Product> patchDoc)
         {
             var product = _context.Products.Find(id);
 
