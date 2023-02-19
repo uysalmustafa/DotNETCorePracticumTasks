@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using ProductsAPI.Middleware;
 using ProductsAPI.Models;
-
+using ProductsAPI.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddDbContext<ProductContext>(opt=>
 opt.UseInMemoryDatabase("ProductList"));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddServicesDI();
 
 var app = builder.Build();
 
@@ -22,11 +24,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
+app.UseMiddleware<LoggingMiddleware>();
 app.UseMiddleware<GlobalErrorHandlingMiddleware>();
-
 app.MapControllers();
-
 app.Run();

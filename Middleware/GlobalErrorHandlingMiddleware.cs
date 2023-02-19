@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Mime;
 using System.Text.Json;
 
 public class GlobalErrorHandlingMiddleware
@@ -19,13 +20,14 @@ public class GlobalErrorHandlingMiddleware
         catch (Exception ex)
         {
             var response = context.Response;
-            response.ContentType = "application/json";
+            response.ContentType = MediaTypeNames.Application.Json;
             response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
             var errorResponse = new
             {
                 message = ex.Message,
-                statusCode = response.StatusCode
+                statusCode = response.StatusCode,
+                title = "Error"
             };
 
             var errorJson = JsonSerializer.Serialize(errorResponse);
