@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using ProductsAPI.Middleware;
 using ProductsAPI.Models;
 using ProductsAPI.Extension;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,7 @@ opt.UseInMemoryDatabase("ProductList"));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddServicesDI();
-
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
