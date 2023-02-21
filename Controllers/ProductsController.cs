@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using ProductsAPI.ProductOperations.GetProducts;
 using ProductsAPI.ProductOperations.UpdateProduct;
 using ProductsAPI.Services;
 using System.Collections.Generic;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using static ProductsAPI.ProductOperations.CreateProduct.CreateProductCommand;
 using static ProductsAPI.ProductOperations.GetProductById.GetProductByIdQuery;
 
@@ -52,7 +54,10 @@ namespace ProductsAPI.Controllers
         {
             ProductViewIdModel result;
             GetProductByIdQuery query = new GetProductByIdQuery(_context, _mapper);
-            result = query.Handle(id);
+            query.Id = id;
+            GetProductByIdQueryValidator validator = new GetProductByIdQueryValidator();
+            validator.ValidateAndThrow(query);
+            result = query.Handle();
             return Ok(result);
         }
 
@@ -63,6 +68,8 @@ namespace ProductsAPI.Controllers
             UpdateProductCommand command = new UpdateProductCommand(_context, _mapper);
             command.Model = product;
             command.Id = id;
+            UpdateProductCommandValidator validator = new UpdateProductCommandValidator();
+            validator.ValidateAndThrow(command);
             command.Handle();
             return Ok();
         }
@@ -73,6 +80,8 @@ namespace ProductsAPI.Controllers
         {
             CreateProductCommand command = new CreateProductCommand(_context, _mapper);
             command.Model = product;
+            CreateProductCommandValidator validator = new CreateProductCommandValidator();
+            validator.ValidateAndThrow(command);
             command.Handle();
             return Ok();
         }
@@ -83,6 +92,8 @@ namespace ProductsAPI.Controllers
         {
             DeleteProductCommand command = new DeleteProductCommand(_context);
             command.Id = id;
+            DeleteProductCommandValidator validator = new DeleteProductCommandValidator();
+            validator.ValidateAndThrow(command);
             command.Handle();
             return Ok();
         }

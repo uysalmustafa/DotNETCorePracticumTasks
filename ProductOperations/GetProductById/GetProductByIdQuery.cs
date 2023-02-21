@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProductsAPI.Base;
 using ProductsAPI.Models;
+using static ProductsAPI.ProductOperations.CreateProduct.CreateProductCommand;
 
 namespace ProductsAPI.ProductOperations.GetProductById
 {
@@ -11,15 +12,19 @@ namespace ProductsAPI.ProductOperations.GetProductById
 
         private readonly IMapper _mapper;
 
+        public ProductViewIdModel Model { get; set; }
+
+        public int Id { get; set; }
+
         public GetProductByIdQuery(ProductContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
-        public ProductViewIdModel Handle(int id)
+        public ProductViewIdModel Handle()
         {
-            var product = _context.Products.Find(id);
+            var product = _context.Products.Find(Id);
             return _mapper.Map<ProductViewIdModel>(product);
         }
 
@@ -27,7 +32,6 @@ namespace ProductsAPI.ProductOperations.GetProductById
         {
             public string ProductName { get; set; }
             public decimal ProductPrice { get; set; }
-
         }
     }
 }

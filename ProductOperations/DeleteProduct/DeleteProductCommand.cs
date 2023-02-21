@@ -10,12 +10,13 @@ namespace ProductsAPI.ProductOperations.DeleteProduct
 
         private readonly ProductContext _context;
 
+        public int Id { get; set; }
+
         public DeleteProductCommand(ProductContext context)
         {
             _context = context;
         }
 
-        public int Id { get; set; }
         public void Handle()
         {
             var product = _context.Products.Find(Id);
